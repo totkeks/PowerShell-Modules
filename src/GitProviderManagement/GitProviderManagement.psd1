@@ -1,7 +1,6 @@
 @{
     # Script module or binary module file associated with this manifest.
-    # TODO: Replace with your own root module
-    RootModule        = 'StarterModule.psm1'
+    RootModule        = 'GitProviderManagement.psm1'
 
     # Version number of this module.
     ModuleVersion     = '0.0.1'
@@ -10,19 +9,16 @@
     # CompatiblePSEditions = @()
 
     # ID used to uniquely identify this module
-    # TODO: Generate your own with `New-Guid`
-    GUID              = 'GENERATE-YOUR-OWN-GUID'
+    GUID              = 'e2d394da-db1d-4ad6-b98c-104379eb299a'
 
     # Author of this module
-    # TODO: Replace with your own name
-    Author            = 'YOUR NAME'
+    Author            = 'Norman Dankert'
 
     # Company or vendor of this module
     #CompanyName       = 'Unknown'
 
     # Copyright statement for this module
-    # TODO: Replace with your own name
-    Copyright         = '(c) YOUR NAME. All rights reserved.'
+    Copyright         = '(c) Norman Dankert. All rights reserved.'
 
     # Description of the functionality provided by this module
     # Description = ''

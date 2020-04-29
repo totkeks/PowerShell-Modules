@@ -10,4 +10,7 @@ Foreach ($Script in @($PublicScripts + $PrivateScripts)) {
 	}
 }
 
+$Script:GitProviderManagement = @{ }
+$GitProviderManagement.Providers = @{ }
+
 Export-ModuleMember -Function $PublicScripts.BaseName
