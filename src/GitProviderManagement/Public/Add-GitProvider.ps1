@@ -2,6 +2,10 @@ function Add-GitProvider {
 	Param (
 		[Parameter(Mandatory)]
 		[ValidateNotNullOrEmpty()]
+		[ValidateScript(
+			{ -not $GitProviderManagement.Providers.ContainsKey($_) },
+			ErrorMessage = "The provider '{0}' already exists."
+		)]
 		[string] $Name,
 
 		[Parameter(Mandatory)]
@@ -13,12 +17,14 @@ function Add-GitProvider {
 		[string] $PathPattern
 	)
 
-	if ($GitProviderManagement.Providers.ContainsKey($Name)) {
-		Write-Error "The provider '$($Name)' already exists."
-	}
-
-	$GitProviderManagement.Providers.Add($Name, @{
+	$GitProviderManagement.Providers.Add(
+		$Name,
+		@{
+			Name        = $Name
 			UrlPattern  = $UrlPattern
 			PathPattern = $PathPattern
-		})
+		}
+	)
+
+
 }

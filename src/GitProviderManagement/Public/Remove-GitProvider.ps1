@@ -1,6 +1,7 @@
 function Remove-GitProvider {
 	Param (
 		[Parameter(Mandatory)]
+		# [ValidateSet([ValidProviderGenerator])]
 		[string] $Name
 	)
 
