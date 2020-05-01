@@ -70,3 +70,27 @@ function Remove-GitProvider {
 	$GitManagement.Providers.Remove($Name)
 }
 
+function Select-GitProvider {
+	Param (
+		[parameter(Mandatory = $true)]
+		[ValidateNotNullOrEmpty()]
+		[string] $Url
+	)
+
+	$matchingProvider = $null
+
+	foreach ($provider in Get-GitProvider) {
+		$provider = Get-Gitprovider $provider
+
+		if ($Url -match $provider.UrlPattern) {
+			$matchingProvider = $provider
+			break
+		}
+	}
+
+	if ($null -eq $matchingProvider) {
+		Write-Error "No provider found for repository url '$Url'."
+	}
+
+	$matchingProvider
+}
