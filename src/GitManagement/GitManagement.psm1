@@ -1,3 +1,6 @@
+$Script:ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
 # Script-internal configuration object
 $Script:GitManagement = @{ }
 
