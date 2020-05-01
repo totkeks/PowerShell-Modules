@@ -30,6 +30,6 @@ function Test-GitBaseDirectory {
 	$null -ne $GitManagement.BaseDirectory
 }
 
-function Open-GitBaseDirectory {
+function Enter-GitBaseDirectory {
 	Get-GitBaseDirectory | Set-Location
 }
