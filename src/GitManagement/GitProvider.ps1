@@ -36,7 +36,7 @@ function Add-GitProvider {
 		[Parameter(Mandatory)]
 		[ValidateNotNullOrEmpty()]
 		[ValidateScript(
-			{ -not $GitManagement.Providers.ContainsKey($_) },
+			{ (Get-GitProvider) -notcontains $_ },
 			ErrorMessage = "The provider '{0}' already exists."
 		)]
 		[string] $Name,
