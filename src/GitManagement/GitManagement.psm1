@@ -2,8 +2,8 @@
 $Script:GitManagement = @{ }
 
 . $PSScriptRoot\GitProvider.ps1
-
-$GitManagement.HomeDirectory = $null
+. $PSScriptRoot\GitBaseDirectory.ps1
+. $PSScriptRoot\GitRepository.ps1
 
 # Default providers
 Add-GitProvider "Azure" 'https://(?:\w+@)?dev.azure.com/(?<Organization>\w+)/(?<Project>\w+)/_git/(?<Repository>[\w-_]+)' '${Organization}/${Project}/${Repository}'
