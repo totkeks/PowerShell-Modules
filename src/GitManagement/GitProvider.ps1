@@ -24,13 +24,11 @@ function Get-GitProvider {
 		[string] $Name
 	)
 
-	Process {
-		if ($Name) {
-			return $GitManagement.Providers[$Name]
-		}
-
-		Get-SortedProviderNames
+	if ($Name) {
+		return $GitManagement.Providers[$Name]
 	}
+
+	Get-SortedProviderNames
 }
 
 function Add-GitProvider {
