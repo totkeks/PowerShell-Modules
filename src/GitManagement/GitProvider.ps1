@@ -17,7 +17,10 @@ function Get-SortedProviderNames {
 function Get-GitProvider {
 	Param (
 		[Parameter(Mandatory = $false, Position = 0)]
-		[ValidateSet([ValidProviderGenerator], ErrorMessage = "The provider '{0}' does not exist.")]
+		[ValidateSet(
+			[ValidProviderGenerator],
+			ErrorMessage = "The provider '{0}' does not exist."
+		)]
 		[string] $Name
 	)
 
