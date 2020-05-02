@@ -7,7 +7,13 @@ $GitManagement.LastRepositoryScan = Get-Date
 
 class ValidProviderGenerator : IValidateSetValuesGenerator {
 	[string[]] GetValidValues() {
-		return Get-SortedProviderNames
+		return (Find-GitRepositories).Provider | Sort-Object | Get-Unique
+	}
+}
+
+class ValidRepositoryGenerator : IValidateSetValuesGenerator {
+	[string[]] GetValidValues() {
+		return (Find-GitRepositories).Properties.Repository | Sort-Object
 	}
 }
 
@@ -48,18 +54,20 @@ function Find-GitRepositories {
 	if ($null -eq $GitManagement.Repositories -or ((Get-Date) - $GitManagement.LastRepositoryScan).TotalSeconds -gt 300) {
 		Write-Debug "Updating repository cache"
 
-		$repositoryPaths = Get-GitBaseDirectory | FindDotGitDirectory | RelativePaths
+		$baseDirectory = Get-GitBaseDirectory
+		$repositoryPaths = ($baseDirectory | FindDotGitDirectory).FullName
 		$providers = Get-GitProvider
 
 		$GitManagement.LastRepositoryScan = Get-Date
 		$GitManagement.Repositories = $repositoryPaths | ForEach-Object {
-			$splitPath = $_.Split([io.path]::DirectorySeparatorChar)
+			$splitPath = [io.path]::GetRelativePath($baseDirectory, $_).Split([io.path]::DirectorySeparatorChar)
 			$provider = $providers | Where-Object Name -EQ $splitPath[0]
 			$directories = $splitPath[1..($splitPath.Count - 1)]
 
 			$repository = [PSCustomObject]@{
 				PSTypeName = "GitManagement.GitRepository"
 				Provider   = $provider.Name
+				Path       = $_
 			}
 
 			$properties = [ordered]@{ }
@@ -87,8 +95,11 @@ function Get-GitRepository {
 		[switch] $Force,
 
 		[parameter(ParameterSetName = "List")]
-		[ValidateNotNullOrEmpty()]
-		[string] $Provider
+		[ValidateSet([ValidProviderGenerator])]
+		[string] $Provider,
+
+		[parameter(ParameterSetName = "List")]
+		[switch] $Refresh
 	)
 
 	switch ($PSCmdlet.ParameterSetName) {
@@ -96,13 +107,18 @@ function Get-GitRepository {
 			CloneGitRepository $Url $Force
 		}
 
-		Default {
+		"List" {
+			if ($Refresh) {
+				$GitManagement.Repositories = $null
+			}
+
+			$repositories = Find-GitRepositories
+
 			if ($Provider) {
-				Find-GitRepositories | Where-Object Provider -EQ $Provider
+				$repositories = $repositories | Where-Object Provider -EQ $Provider
 			}
-			else {
-				Find-GitRepositories
-			}
+
+			$repositories
 		}
 	}
 }
@@ -110,9 +126,9 @@ function Get-GitRepository {
 function Enter-GitRepository {
 	Param(
 		[parameter(Mandatory)]
-		[ValidateNotNullOrEmpty()]
+		[ValidateSet([ValidRepositoryGenerator])]
 		[string] $Name
 	)
 
-
+	Set-Location (Find-GitRepositories | Where-Object { $_.Properties.Repository -eq $Name }).Path
 }
