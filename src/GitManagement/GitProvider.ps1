@@ -28,12 +28,12 @@ function Get-GitProvider {
 		return $GitManagement.Providers[$Name]
 	}
 
-	Get-SortedProviderNames
+	$GitManagement.Providers.Values | Sort-Object Name
 }
 
 function Add-GitProvider {
 	Param (
-		[Parameter(Mandatory)]
+		[Parameter(Mandatory, Position = 0)]
 		[ValidateNotNullOrEmpty()]
 		[ValidateScript(
 			{ (Get-GitProvider) -notcontains $_ },
@@ -41,21 +41,26 @@ function Add-GitProvider {
 		)]
 		[string] $Name,
 
-		[Parameter(Mandatory)]
+		[Parameter(Mandatory, Position = 1)]
 		[ValidateNotNullOrEmpty()]
 		[string] $UrlPattern,
 
-		[Parameter(Mandatory)]
+		[Parameter(Position = 2)]
 		[ValidateNotNullOrEmpty()]
-		[string] $PathPattern
+		[string[]] $DirectoryHierarchy = @("Repository")
 	)
+
+	if ($DirectoryHierarchy -notcontains "Repository")	{
+		Write-Error "The directory hierarchy must contain the 'Repository' element."
+	}
 
 	$GitManagement.Providers.Add(
 		$Name,
-		@{
-			Name        = $Name
-			UrlPattern  = $UrlPattern
-			PathPattern = $PathPattern
+		[PSCustomObject]@{
+			PSTypeName         = "GitManagement.GitProvider"
+			Name               = $Name
+			UrlPattern         = $UrlPattern
+			DirectoryHierarchy = $DirectoryHierarchy
 		}
 	)
 }
@@ -80,8 +85,6 @@ function Select-GitProvider {
 	$matchingProvider = $null
 
 	foreach ($provider in Get-GitProvider) {
-		$provider = Get-Gitprovider $provider
-
 		if ($Url -match $provider.UrlPattern) {
 			$matchingProvider = $provider
 			break
