@@ -43,6 +43,10 @@ function Add-GitProvider {
 
 		[Parameter(Mandatory, Position = 1)]
 		[ValidateNotNullOrEmpty()]
+		[ValidatePattern(
+			"\(\?<Repository>",
+			ErrorMessage = "The url pattern must contain the named capturing group 'Repository'."
+		)]
 		[string] $UrlPattern,
 
 		[Parameter(Position = 2)]
