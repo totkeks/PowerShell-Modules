@@ -3,6 +3,7 @@ Set-StrictMode -Version Latest
 
 # Script-internal configuration object
 $Script:GitManagement = @{ }
+$GitManagement.BaseDirectory = $null
 
 . $PSScriptRoot\GitProvider.ps1
 . $PSScriptRoot\GitBaseDirectory.ps1

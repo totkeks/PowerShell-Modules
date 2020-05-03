@@ -1,7 +1,17 @@
-$GitManagement.BaseDirectory = $null
-
 function Set-GitBaseDirectory {
-	Param(
+	<#
+		.SYNOPSIS
+			Sets the base directory for all git management functions.
+
+		.EXAMPLE
+			Set-GitBaseDirectory C:\Projects
+
+		.LINK
+			Get-GitBaseDirectory
+	#>
+	[CmdletBinding()]
+	param(
+		# The path to the new git base directory.
 		[parameter(Mandatory)]
 		[ValidateScript(
 			{ Test-Path $_ -PathType Container },
@@ -19,17 +29,20 @@ function Set-GitBaseDirectory {
 }
 
 function Get-GitBaseDirectory {
-	if (Test-GitBaseDirectory) {
-		return $GitManagement.BaseDirectory
+	<#
+		.SYNOPSIS
+			Gets the currently configured base directory used by all git management functions.
+
+		.EXAMPLE
+			Get-GitBaseDirectory
+
+		.LINK
+			Set-GitBaseDirectory
+	#>
+
+	if (-not $GitManagement.BaseDirectory) {
+		Write-Error "No git base directory set."
 	}
 
-	Write-Error "No git base directory set."
-}
-
-function Test-GitBaseDirectory {
-	$null -ne $GitManagement.BaseDirectory
-}
-
-function Enter-GitBaseDirectory {
-	Get-GitBaseDirectory | Set-Location
+	$GitManagement.BaseDirectory
 }
