@@ -17,6 +17,16 @@ class ValidRepositoryGenerator : IValidateSetValuesGenerator {
 	}
 }
 
+class ConfiguredProvidersGenerator : IValidateSetValuesGenerator {
+	[string[]] GetValidValues() {
+		return Get-SortedProviderNames
+	}
+}
+
+function Get-SortedProviderNames {
+	$GitManagement.Providers.Keys | Sort-Object
+}
+
 function CloneGitRepository ([string]$Url, [bool]$Force) {
 	$provider = Select-GitProvider $Url
 
@@ -124,6 +134,7 @@ function Get-GitRepository {
 }
 
 function Enter-GitRepository {
+	[CmdletBinding()]
 	Param(
 		[parameter(Mandatory)]
 		[ValidateSet([ValidRepositoryGenerator])]
@@ -131,4 +142,40 @@ function Enter-GitRepository {
 	)
 
 	Set-Location (Find-GitRepositories | Where-Object { $_.Properties.Repository -eq $Name }).Path
+}
+
+function New-GitRepository {
+	[CmdletBinding()]
+	Param (
+		[parameter(Mandatory, Position = 0)]
+		[ValidateSet([ConfiguredProvidersGenerator])]
+		[string] $Provider
+	)
+
+	DynamicParam {
+		if ($Provider) {
+			$dynamicParameters = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+			$position = 0
+
+			foreach ($directory in (Get-GitProvider $Provider).DirectoryHierarchy) {
+				$attribute = [System.Management.Automation.ParameterAttribute]::new()
+				$attribute.Mandatory = $true
+				$attribute.Position = ++$position
+
+				$attributeCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+				$attributeCollection.add($attribute)
+
+				$parameter = [System.Management.Automation.RuntimeDefinedParameter]::new($directory, [string], $attributeCollection)
+				$dynamicParameters.Add($directory, $parameter)
+			}
+
+			return $dynamicParameters
+		}
+	}
+
+	Process {
+		$directories = $PSBoundParameters.Values
+		$repositoryPath = Join-Path (Get-GitBaseDirectory) @directories
+		git init $repositoryPath
+	}
 }
