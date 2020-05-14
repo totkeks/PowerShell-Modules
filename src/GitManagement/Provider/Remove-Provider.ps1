@@ -6,9 +6,9 @@ function Remove-Provider {
 			Removes a git hosting provider from the configuration.
 
 		.EXAMPLE
-			Remove-Provider Azure
+			Remove-Provider GitHub
 
-			This will remove the 'Azure' provider from to the configuration.
+			This will remove the 'GitHub' provider from to the configuration.
 
 		.LINK
 			Add-Provider

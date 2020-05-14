@@ -11,9 +11,9 @@ function Get-Provider {
 			This will return all providers.
 
 		.EXAMPLE
-			Get-Provider Azure
+			Get-Provider GitHub
 
-			This will only return the 'Azure' provider, if it exists.
+			This will only return the 'GitHub' provider, if it exists.
 
 		.LINK
 			Add-Provider

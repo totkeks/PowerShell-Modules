@@ -4,9 +4,9 @@ function Add-Provider {
 			Adds an additional git hosting provider to the configuration.
 
 		.EXAMPLE
-			Add-Provider Azure 'https://(?:\w+@)?dev.azure.com/(?<Organization>\w+)/(?<Project>\w+)/_git/(?<Repository>[\w-_]+)' Organization, Project, Repository
+			Add-Provider GitHub 'https://github\.com/(?<UserOrOrganization>\w+)/(?<Repository>[\w-_]+)\.git' UserOrOrganization, Repository
 
-			This will add the 'Azure' provider to the configuration.
+			This will add the 'GitHub' provider to the configuration.
 
 		.LINK
 			Get-Provider
