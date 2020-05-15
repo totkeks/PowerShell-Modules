@@ -21,7 +21,6 @@ function Get-Provider {
 	#>
 	[CmdletBinding()]
 	Param (
-		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateSet(
 			[ConfiguredProvidersGenerator],
 			ErrorMessage = "The provider '{0}' does not exist."

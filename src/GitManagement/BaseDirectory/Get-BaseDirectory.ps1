@@ -9,6 +9,8 @@ function Get-BaseDirectory {
 		.LINK
 			Set-BaseDirectory
 	#>
+	[CmdletBinding()]
+	Param ()
 
 	if (-not $GitManagement.BaseDirectory) {
 		Write-Error "No git base directory set."
