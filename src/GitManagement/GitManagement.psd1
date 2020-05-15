@@ -1,24 +1,24 @@
 @{
     # Script module or binary module file associated with this manifest.
-    RootModule        = 'GitManagement.psm1'
+    RootModule           = 'GitManagement.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.0.0'
+    ModuleVersion        = '1.0.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
 
     # ID used to uniquely identify this module
-    GUID              = 'e2d394da-db1d-4ad6-b98c-104379eb299a'
+    GUID                 = 'e2d394da-db1d-4ad6-b98c-104379eb299a'
 
     # Author of this module
-    Author            = 'Norman Dankert'
+    Author               = 'Norman Dankert'
 
     # Company or vendor of this module
     #CompanyName       = 'Unknown'
 
     # Copyright statement for this module
-    Copyright         = '(c) Norman Dankert. All rights reserved.'
+    Copyright            = '(c) Norman Dankert. All rights reserved.'
 
     # Description of the functionality provided by this module
     # Description = ''
@@ -54,7 +54,7 @@
     # TypesToProcess = @()
 
     # Format files (.ps1xml) to be loaded when importing this module
-    FormatsToProcess  = @(
+    FormatsToProcess     = @(
         "GitRepository.ps1xml"
     )
 
@@ -62,28 +62,27 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @(
-        "Get-GitProvider"
-        "Add-GitProvider"
-        "Remove-GitProvider"
+    FunctionsToExport    = @(
+        "Get-Provider"
+        "Add-Provider"
+        "Remove-Provider"
 
-        "Set-GitBaseDirectory"
-        "Get-GitBaseDirectory"
-        "Enter-GitBaseDirectory"
+        "Set-BaseDirectory"
+        "Get-BaseDirectory"
 
-        "Get-GitRepository"
-        "Enter-GitRepository"
-        "New-GitRepository"
+        "Get-Repository"
+        "Enter-Repository"
+        "New-Repository"
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport   = @()
+    CmdletsToExport      = @()
 
     # Variables to export from this module
-    VariablesToExport = @()
+    VariablesToExport    = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = @()
+    AliasesToExport      = @()
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -95,7 +94,7 @@
     # FileList = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData       = @{
+    PrivateData          = @{
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
@@ -128,5 +127,5 @@
     # HelpInfoURI = ''
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
-    # DefaultCommandPrefix = ''
+    DefaultCommandPrefix = 'Git'
 }
