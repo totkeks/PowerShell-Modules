@@ -1,6 +1,11 @@
 $Script:ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
+# If git is not installed, abort the module load
+if ($null -eq (Get-Command "git.exe" -ErrorAction SilentlyContinue)) {
+	throw "Unable to find 'git.exe' in your PATH. GitManagement module does not work without git installed."
+}
+
 # Script-internal configuration object
 $Script:GitManagement = @{ }
 $GitManagement.Providers = @{ }

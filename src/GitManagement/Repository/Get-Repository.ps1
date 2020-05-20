@@ -26,7 +26,7 @@ function Get-Repository {
 	#>
 	[CmdletBinding(DefaultParameterSetName = "List")]
 	Param(
-		[parameter(Position = 0, ParameterSetName = "Clone")]
+		[parameter(Mandatory, Position = 0, ParameterSetName = "Clone")]
 		[ValidateNotNullOrEmpty()]
 		[string] $Url,
 

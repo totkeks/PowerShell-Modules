@@ -18,7 +18,7 @@ function New-Repository {
 	#>
 	[CmdletBinding()]
 	Param (
-		[parameter(Mandatory, Position = 0)]
+		[Parameter(Mandatory, Position = 0)]
 		[ValidateSet([ConfiguredProvidersGenerator])]
 		[string] $Provider
 	)
