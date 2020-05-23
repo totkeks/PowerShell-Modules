@@ -18,7 +18,7 @@ function Set-BaseDirectory {
 		)]
 		[ValidateScript(
 			{ Test-Path $_ },
-			ErrorMessage = "The path '{0}' does not exist. Use -Force to set it anyway."
+			ErrorMessage = "The path '{0}' does not exist."
 		)]
 		[ValidateNotNullOrEmpty()]
 		[string] $Path
