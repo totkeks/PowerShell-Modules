@@ -17,6 +17,7 @@ function Select-Provider {
 
 	if ($null -eq $matchingProvider) {
 		Write-Error "No provider found for repository url '$Url'."
+		return
 	}
 
 	$matchingProvider

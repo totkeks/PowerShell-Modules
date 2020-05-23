@@ -14,6 +14,7 @@ function Get-BaseDirectory {
 
 	if (-not $GitManagement.BaseDirectory) {
 		Write-Error "No git base directory set."
+		return
 	}
 
 	$GitManagement.BaseDirectory

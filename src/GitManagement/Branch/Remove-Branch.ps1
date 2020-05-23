@@ -14,6 +14,7 @@ function Remove-Branch {
 	Begin {
 		if (-not (Test-Repository)) {
 			Write-Error "Command needs to be run inside a git repository. Aborting."
+			return
 		}
 	}
 

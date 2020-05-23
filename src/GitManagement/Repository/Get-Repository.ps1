@@ -57,6 +57,7 @@ function Get-Repository {
 				}
 				else {
 					Write-Error "Target directory already exists. Use -Force to overwrite."
+					return
 				}
 			}
 

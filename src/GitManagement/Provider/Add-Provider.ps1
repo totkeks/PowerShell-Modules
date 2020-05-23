@@ -37,6 +37,7 @@ function Add-Provider {
 
 	if ($DirectoryHierarchy -notcontains "Repository")	{
 		Write-Error "The directory hierarchy must contain the 'Repository' element."
+		return
 	}
 
 	$GitManagement.Providers.Add(
