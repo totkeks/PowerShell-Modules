@@ -1,5 +1,5 @@
 @{
-    RootModule = 'Profile.psm1'
+    RootModule = 'ProfileManagement.psm1'
     ModuleVersion = '0.0.1'
     GUID = 'bcadff99-6045-4568-8f69-82be0b36879c'
     Author = 'Norman Dankert'
@@ -12,7 +12,11 @@
     FunctionsToExport = @(
         "Start-LoadingSequence"
         "Stop-LoadingSequence"
-        "Write-Host"
+
+        "Get-PathAlias"
+        "New-PathAlias"
+        "Remove-PathAlias"
+        "Select-PathAlias"
     )
     CmdletsToExport = @()
     VariablesToExport = @()

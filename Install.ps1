@@ -2,7 +2,7 @@ $UserModulePath = $env:PSModulePath.Split(";") | Where-Object { $_.contains($env
 
 $Modules = @(
 	"GitManagement"
-	"Profile"
+	"ProfileManagement"
 )
 
 foreach ($module in $Modules) {

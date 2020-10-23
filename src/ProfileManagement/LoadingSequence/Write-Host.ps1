@@ -13,7 +13,7 @@ $Script:WriteHostFunction = {
 
 	Begin {
 		if (-not $ContinueLine) {
-			Microsoft.PowerShell.Utility\Write-Host -ForegroundColor Green -NoNewline "»»» "
+			Microsoft.PowerShell.Utility\Write-Host -ForegroundColor Green -NoNewline $ProfileManagement.LinePrefix
 		}
 	}
 
