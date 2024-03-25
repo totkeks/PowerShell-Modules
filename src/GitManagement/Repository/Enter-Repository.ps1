@@ -17,7 +17,14 @@ function Enter-Repository {
 	[CmdletBinding()]
 	Param(
 		[parameter(Mandatory)]
-		[ValidateSet([ExistingRepositoriesGenerator])]
+		[ValidateScript({
+				if ($_ -notin [ExistingRepositoriesGenerator]::new().GetValidValues()) { throw "Not a valid value: $_" }
+				$true
+		 })]
+		[ArgumentCompleter({
+				param($command, $param, $wordToComplete)
+				[ExistingRepositoriesGenerator]::new().GetValidValues() -like "$wordToComplete*"
+		 })]
 		[string] $Name
 	)
 
