@@ -50,10 +50,10 @@ function Get-Repository {
 
 	switch ($PSCmdlet.ParameterSetName) {
 		"Clone" {
-			$provider = Select-Provider $Url
+			$matchingProvider = Select-Provider $Url
 
-			$Url -match $provider.UrlPattern | Out-Null
-			$repositoryPath = Join-Path (Get-BaseDirectory) $provider.Name ($provider.directoryHierarchy | ForEach-Object { $Matches[$_] })
+			$Url -match $matchingProvider.UrlPattern | Out-Null
+			$repositoryPath = Join-Path (Get-BaseDirectory) $matchingProvider.Name ($matchingProvider.directoryHierarchy | ForEach-Object { $Matches[$_] })
 
 			Write-Host "Resolved target directory as '$repositoryPath'."
 
