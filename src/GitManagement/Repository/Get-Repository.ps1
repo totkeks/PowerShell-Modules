@@ -46,7 +46,7 @@ function Get-Repository {
 			$provider = Select-Provider $Url
 
 			$Url -match $provider.UrlPattern | Out-Null
-			$repositoryPath = Join-Path (Get-GitBaseDirectory) $provider.Name ($provider.directoryHierarchy | ForEach-Object { $Matches[$_] })
+			$repositoryPath = Join-Path (Get-Directory) $provider.Name ($provider.directoryHierarchy | ForEach-Object { $Matches[$_] })
 
 			Write-Host "Resolved target directory as '$repositoryPath'."
 
