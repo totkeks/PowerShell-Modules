@@ -1,7 +1,6 @@
 $Script:ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
-# If git is not installed, abort the module load
 if ($null -eq (Get-Command "git.exe" -ErrorAction SilentlyContinue)) {
 	throw "Unable to find 'git.exe' in your PATH. GitManagement module does not work without git installed."
 }
@@ -14,7 +13,7 @@ $Script:GitManagement = @{
 	LastRepositoryScan = Get-Date
 }
 
-# Load everything
+# Load all scripts belonging to this module
 Get-ChildItem -Recurse $PSScriptRoot *.ps1 | ForEach-Object { . $_.FullName }
 
 # Default providers
