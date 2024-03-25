@@ -8,6 +8,9 @@ foreach ($module in $Modules) {
 	$sourcePath = Join-Path "src" $module
 	$targetPath = Join-Path $UserModulePath $module
 
+	Write-Output "Removing existing module $module from $targetPath"
 	Remove-Item $targetPath -Recurse -ErrorAction SilentlyContinue
+
+	Write-Output "Copying module $module from $sourcePath to $targetPath"
 	Copy-Item $sourcePath $targetPath -Recurse
 }
