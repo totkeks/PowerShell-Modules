@@ -7,11 +7,12 @@ if ($null -eq (Get-Command "git.exe" -ErrorAction SilentlyContinue)) {
 }
 
 # Script-internal configuration object
-$Script:GitManagement = @{ }
-$GitManagement.Providers = @{ }
-$GitManagement.BaseDirectory = $null
-$GitManagement.Repositories = $null
-$GitManagement.LastRepositoryScan = Get-Date
+$Script:GitManagement = @{
+	Providers = @{ }
+	BaseDirectory = $null
+	Repositories = $null
+	LastRepositoryScan = Get-Date
+}
 
 # Load everything
 Get-ChildItem -Recurse $PSScriptRoot *.ps1 | ForEach-Object { . $_.FullName }
