@@ -1,6 +1,6 @@
 @{
     # Script module or binary module file associated with this manifest.
-    RootModule = 'GitManagement.psm1'
+    RootModule = 'totkeks.GitManagement.psm1'
 
     # Version number of this module.
     ModuleVersion = '0.2.0'
