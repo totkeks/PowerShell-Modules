@@ -28,7 +28,7 @@ function New-Repository {
 			$dynamicParameters = [RuntimeDefinedParameterDictionary]::new()
 			$position = 0
 
-			foreach ($directory in (Get-GitProvider $Provider).DirectoryHierarchy) {
+			foreach ($directory in (Get-Provider $Provider).DirectoryHierarchy) {
 				$attribute = [ParameterAttribute]::new()
 				$attribute.Mandatory = $true
 				$attribute.Position = ++$position
@@ -46,7 +46,7 @@ function New-Repository {
 
 	Process {
 		$directories = $PSBoundParameters.Values
-		$repositoryPath = Join-Path (Get-GitBaseDirectory) @directories
+		$repositoryPath = Join-Path (Get-BaseDirectory) @directories
 		git init $repositoryPath
 	}
 }
