@@ -1,6 +1,7 @@
 function Find-Repository {
-	[CmdletBinding()]
-	Param ()
+	Param (
+		[switch] $Refresh
+	)
 
 	filter FindDotGitDirectory {
 		if (Test-Path $_\.git) {
@@ -10,7 +11,7 @@ function Find-Repository {
 		Get-ChildItem -Directory $_ | FindDotGitDirectory
 	}
 
-	if ($null -eq $GitManagement.Repositories -or ((Get-Date) - $GitManagement.LastRepositoryScan).TotalSeconds -gt 300) {
+	if ($null -eq $GitManagement.Repositories -or $Refresh -or ((Get-Date) - $GitManagement.LastRepositoryScan).TotalSeconds -gt 300) {
 		Write-Debug "Updating repository cache"
 
 		$baseDirectory = Get-BaseDirectory
@@ -25,8 +26,8 @@ function Find-Repository {
 
 			$repository = [PSCustomObject]@{
 				PSTypeName = "GitManagement.GitRepository"
-				Provider   = $provider.Name
-				Path       = $_
+				Provider = $provider.Name
+				Path = $_
 			}
 
 			$properties = [ordered]@{ }
