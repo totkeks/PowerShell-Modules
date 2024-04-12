@@ -16,6 +16,9 @@ $Script:GitManagement = @{
 # Load all scripts belonging to this module
 Get-ChildItem -Recurse $PSScriptRoot *.ps1 | ForEach-Object { . $_.FullName }
 
+# Even if not a recommended verb, let's have a `clone` alias
+Set-Alias -Name Clone-Repository -Value Install-Repository
+
 # Default providers
 Add-Provider Azure 'https://(?:\w+@)?dev.azure.com/(?<Organization>[\w-]+)/(?<Project>[\w-]+)/_git/(?<Repository>[\w-]+)' Organization, Project, Repository
 Add-Provider GitHub 'https://github\.com/(?<UserOrOrganization>[\w-]+)/(?<Repository>[\w-]+)\.git' UserOrOrganization, Repository
