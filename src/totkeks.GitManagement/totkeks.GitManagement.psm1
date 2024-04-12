@@ -18,5 +18,5 @@ Get-ChildItem -Recurse $PSScriptRoot *.ps1 | ForEach-Object { . $_.FullName }
 
 # Default providers
 Add-Provider Azure 'https://(?:\w+@)?dev.azure.com/(?<Organization>[\w-]+)/(?<Project>[\w-]+)/_git/(?<Repository>[\w-]+)' Organization, Project, Repository
-Add-Provider GitHub 'https://github\.com/(?<UserOrOrganization>[\w-]+])/(?<Repository>[\w-]+)\.git' UserOrOrganization, Repository
+Add-Provider GitHub 'https://github\.com/(?<UserOrOrganization>[\w-]+)/(?<Repository>[\w-]+)\.git' UserOrOrganization, Repository
 Add-Provider Bitbucket 'https://(?:\w+@)?bitbucket.org/(?<User>[\w-]+)/(?<Repository>[\w-]+)\.git' User, Repository
