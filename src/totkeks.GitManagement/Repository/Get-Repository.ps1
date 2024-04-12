@@ -1,39 +1,28 @@
 using module ..\Generators\ExistingProvidersGenerator.psm1
 
+<#
+.SYNOPSIS
+	Gets the repositories available locally.
+
+.EXAMPLE
+	Get-Repository
+
+	This will list all locally cloned repositories.
+
+.EXAMPLE
+	Get-Repository -Provider GitHub
+
+	This will list all repositories cloned from GitHub.
+
+.LINK
+	New-Repository
+	Enter-Repository
+#>
 function Get-Repository {
-	<#
-		.SYNOPSIS
-			Gets the repositories available locally or clones a new one.
+	param (
+		[parameter(Position = 0, HelpMessage = "Name of the repository.")]
+		[string] $Name,
 
-		.EXAMPLE
-			Get-Repository
-
-			This will list all locally cloned repositories.
-
-		.EXAMPLE
-			Get-Repository -Provider GitHub
-
-			This will list all repositories cloned from GitHub.
-
-		.EXAMPLE
-			Get-Repository https://github.com/totkeks/PowerShell-Modules.git
-
-			This will clone the 'PowerShell-Modules' repository, that contains this module, from GitHub.
-
-		.LINK
-			New-Repository
-			Enter-Repository
-	#>
-	[CmdletBinding(DefaultParameterSetName = "List")]
-	Param(
-		[parameter(Mandatory, Position = 0, ParameterSetName = "Clone")]
-		[ValidateNotNullOrEmpty()]
-		[string] $Url,
-
-		[parameter(ParameterSetName = "Clone")]
-		[switch] $Force,
-
-		[parameter(ParameterSetName = "List")]
 		[ValidateScript({
 				if ($_ -notin [ExistingProvidersGenerator]::new().GetValidValues()) { throw "Not a valid value: $_" }
 				$true
@@ -44,45 +33,29 @@ function Get-Repository {
 			})]
 		[string] $Provider,
 
-		[parameter(ParameterSetName = "List")]
+		[parameter(HelpMessage = "Use exact match instead of wildcard match.")]
+		[switch] $Exact,
+
+		[parameter(HelpMessage = "Refresh the list of repositories.")]
 		[switch] $Refresh
 	)
 
-	switch ($PSCmdlet.ParameterSetName) {
-		"Clone" {
-			$matchingProvider = Select-Provider $Url
+	process {
+		$repositories = Find-Repository -Refresh:$Refresh
 
-			$Url -match $matchingProvider.UrlPattern | Out-Null
-			$repositoryPath = Join-Path (Get-BaseDirectory) $matchingProvider.Name ($matchingProvider.directoryHierarchy | ForEach-Object { $Matches[$_] })
+		if ($Name) {
+			$repositories = $repositories | Where-Object { if ($Exact) { $_.Properties.Repository -eq $Name } else { $_.Properties.Repository -like "*$Name*" } }
 
-			Write-Host "Resolved target directory as '$repositoryPath'."
-
-			if (Test-Path $repositoryPath) {
-				if ($Force) {
-					Write-Host "Removing existing target directory."
-					Remove-Item -Recurse -Force $repositoryPath
-				}
-				else {
-					Write-Error "Target directory already exists. Use -Force to overwrite."
-					return
-				}
+			if (!$repositories) {
+				Write-Error "No repositories found matching name '$Name'."
+				return
 			}
-
-			git clone $Url $repositoryPath
 		}
 
-		"List" {
-			if ($Refresh) {
-				$GitManagement.Repositories = $null
-			}
-
-			$repositories = Find-Repository
-
-			if ($Provider) {
-				$repositories = $repositories | Where-Object Provider -EQ $Provider
-			}
-
-			$repositories
+		if ($Provider) {
+			$repositories = $repositories | Where-Object Provider -EQ $Provider
 		}
+
+		$repositories
 	}
 }
