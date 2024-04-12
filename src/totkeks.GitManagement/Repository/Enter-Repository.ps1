@@ -11,8 +11,8 @@ function Enter-Repository {
 			This will set the current location to the 'PowerShell-Modules' repository.
 
 		.LINK
-			New-Repository
 			Get-Repository
+			Install-Repository
 	#>
 	[CmdletBinding()]
 	Param(
@@ -28,5 +28,24 @@ function Enter-Repository {
 		[string] $Name
 	)
 
-	Set-Location (Find-Repository | Where-Object { $_.Properties.Repository -eq $Name }).Path
+	$repositories = (Get-Repository -Exact $Name)
+
+	if ($repositories.Count -gt 1) {
+		$title = "Repository Selection"
+		$message = "Found multiple repositories matching the same name. Please select one:"
+		$options = [System.Management.Automation.Host.ChoiceDescription[]]($repositories | ForEach-Object { $counter = 1 } {
+				$distinguishableName = "&$counter. $($_.Properties[-2]) ($($_.Properties[-1]))"
+				$counter++
+				New-Object System.Management.Automation.Host.ChoiceDescription $distinguishableName
+			})
+
+		$selection = $Host.UI.PromptForChoice($title, $message, $options, 0)
+
+		$repository = $repositories[$selection]
+	}
+	else {
+		$repository = $repositories[0]
+	}
+
+	Set-Location $repository.Path
 }
