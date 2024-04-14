@@ -15,4 +15,4 @@ jobs:
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
         shell: pwsh
-        run: Publish.ps1
+        run: ./Publish.ps1
