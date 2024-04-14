@@ -15,8 +15,4 @@ jobs:
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
         shell: pwsh
-        run: |
-          Get-ChildItem -Directory .\src\ | ForEach-Object {
-
-            Publish-Module -Path $_ -NuGetApiKey $env:NUGET_KEY -ErrorAction Continue
-          }
+        run: Publish.ps1
