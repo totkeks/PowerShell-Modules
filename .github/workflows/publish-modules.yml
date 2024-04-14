@@ -17,5 +17,6 @@ jobs:
         shell: pwsh
         run: |
           Get-ChildItem -Directory .\src\ | ForEach-Object {
-            Publish-Module -Path $_ -NuGetApiKey $env:NUGET_KEY -Verbose
+
+            Publish-Module -Path $_ -NuGetApiKey $env:NUGET_KEY -ErrorAction Continue
           }
