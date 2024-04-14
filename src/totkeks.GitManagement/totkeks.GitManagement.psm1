@@ -1,4 +1,4 @@
-$Script:ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 if ($null -eq (Get-Command "git.exe" -ErrorAction SilentlyContinue)) {
@@ -10,7 +10,7 @@ $Script:GitManagement = @{
 	Providers = @{ }
 	BaseDirectory = $null
 	Repositories = $null
-	LastRepositoryScan = Get-Date
+	LastRepositoryScan = $null
 }
 
 # Load all scripts belonging to this module
