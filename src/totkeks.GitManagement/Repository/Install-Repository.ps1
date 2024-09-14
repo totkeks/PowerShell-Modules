@@ -37,4 +37,6 @@ function Install-Repository {
 			return
 		}
 	}
+
+	git clone $Url $repositoryPath && Enter-Repository $repositoryPath
 }
