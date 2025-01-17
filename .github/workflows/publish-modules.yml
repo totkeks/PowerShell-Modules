@@ -10,7 +10,7 @@ jobs:
     name: Publish to PowerShell Gallery
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Publish each available module
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
