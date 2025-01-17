@@ -9,5 +9,5 @@ Get-ChildItem -Directory src | ForEach-Object {
 	}
 
 	Write-Host "Publishing $nextVersion of $moduleName"
-	Publish-PSResource -Path $_ -NuGetApiKey $env:NUGET_KEY
+	Publish-PSResource -Path $_ -ApiKey $env:NUGET_KEY
 }
