@@ -1,4 +1,4 @@
-Get-ChildItem -Directory src | ForEach-Object {
+Get-ChildItem -Directory modules | ForEach-Object {
 	$moduleName = $_.Name
 	$latestVersion = (Find-PSResource $moduleName).Version
 	$nextVersion = (Import-PowerShellDataFile (Join-Path $_ "$moduleName.psd1")).ModuleVersion
