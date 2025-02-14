@@ -1,10 +1,10 @@
 function Install-Dotfiles {
 	[CmdletBinding(SupportsShouldProcess)]
 	param (
-		[Parameter(Mandatory, HelpMessage = "Path to the source dotfiles directory.")]
+		[Parameter(Mandatory, HelpMessage = 'Path to the source dotfiles directory.')]
 		[string] $Path,
 
-		[Parameter(HelpMessage = "Path to the destination directory, defaults to user home directory.")]
+		[Parameter(HelpMessage = 'Path to the destination directory, defaults to user home directory.')]
 		[string] $Destination = $HOME
 	)
 
@@ -17,6 +17,12 @@ function Install-Dotfiles {
 
 		Write-Verbose "Processing $relativePath"
 
+		$targetDir = Split-Path $targetPath
+		if (!(Test-Path $targetDir)) {
+			Write-Verbose "Creating directory $targetDir"
+			New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+		}
+
 		$newContent = Resolve-Content $_
 
 		if (Test-Path $targetPath) {
@@ -24,14 +30,18 @@ function Install-Dotfiles {
 			$diff = Compare-Object $currentContent $newContent
 
 			if (-not $diff) {
-				Write-Verbose "Source and target file are identical, skipping replacement"
+				Write-Verbose 'Source and target file are identical, skipping replacement'
 				return
 			}
 
-			Write-Host "Differences found:"
-			$diff | Format-Table
+			$tempCurrent = New-TemporaryFile
+			$tempNew = New-TemporaryFile
+			$currentContent | Out-File $tempCurrent -Force
+			$newContent | Out-File $tempNew -Force
 
-			if (-not ($PSCmdlet.ShouldContinue($targetPath, "Replace existing file?", [ref]$yesToAll, [ref]$noToAll))) {
+			& code --diff $tempCurrent $tempNew
+
+			if (-not ($PSCmdlet.ShouldContinue($targetPath, 'Replace existing file?', [ref]$yesToAll, [ref]$noToAll))) {
 				return
 			}
 		}
