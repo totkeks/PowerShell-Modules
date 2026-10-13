@@ -28,6 +28,7 @@
 				},
 				"background": {
 					"activeOnStart": true,
+					"beginsPattern": "^Staged module:.*$",
 					"endsPattern": "^Module loaded:.*$"
 				}
 			}
