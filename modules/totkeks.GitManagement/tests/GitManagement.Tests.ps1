@@ -1,5 +1,5 @@
 BeforeAll {
-    $script:modulePath = (Resolve-Path (Join-Path $PSScriptRoot '..\totkeks.GitManagement.psd1')).Path
+    $script:modulePath = (Resolve-Path (Join-Path $PSScriptRoot '..\out\totkeks.GitManagement\totkeks.GitManagement.psd1')).Path
     $script:baseDirectory = Join-Path $TestDrive 'repositories'
     New-Item -ItemType Directory -Path $script:baseDirectory -Force | Out-Null
     Import-Module -Name $script:modulePath -Force
@@ -81,8 +81,72 @@ Describe 'repository operations and argument completion' {
             $repositoryInput,
             $repositoryInput.Length,
             $null
-        ).CompletionMatches.CompletionText
+        ).CompletionMatches.ListItemText
         $repositoryMatches | Should -Contain 'migration-smoke'
+    }
+
+    It 'completes duplicate repository names with provider-specific hierarchy selectors' {
+        New-GitRepository GitHub -UserOrOrganization "alice's org" -Repository completion-collision | Out-Null
+        New-GitRepository Bitbucket -User bob -Repository completion-collision | Out-Null
+        New-GitRepository Azure -Organization example -Project project -Repository completion-collision | Out-Null
+
+        $inputText = 'Enter-GitRepository completion-collision'
+        $matches = [System.Management.Automation.CommandCompletion]::CompleteInput(
+            $inputText,
+            $inputText.Length,
+            $null
+        ).CompletionMatches | Where-Object ToolTip -Like 'User: *; Provider: *'
+
+        @($matches).Count | Should -Be 2
+        $githubMatch = $matches | Where-Object ToolTip -EQ "User: alice's org; Provider: GitHub"
+        $bitbucketMatch = $matches | Where-Object ToolTip -EQ 'User: bob; Provider: Bitbucket'
+
+        $allMatches = [System.Management.Automation.CommandCompletion]::CompleteInput(
+            $inputText,
+            $inputText.Length,
+            $null
+        ).CompletionMatches | Where-Object CompletionText -Like "'completion-collision' -Provider *"
+        @($allMatches).Count | Should -Be 3
+        $githubMatch.CompletionText | Should -Be "'completion-collision' -Provider 'GitHub' -UserOrOrganization 'alice''s org'"
+        $githubMatch.ListItemText | Should -Be 'completion-collision'
+        $bitbucketMatch.CompletionText | Should -Be "'completion-collision' -Provider 'Bitbucket' -User 'bob'"
+        $bitbucketMatch.ListItemText | Should -Be 'completion-collision'
+        $allMatches.ToolTip | Should -Contain 'User: alice''s org; Provider: GitHub'
+        $allMatches.ToolTip | Should -Contain 'User: bob; Provider: Bitbucket'
+        $allMatches.ToolTip | Should -Contain 'Organization: example; Project: project; Provider: Azure'
+
+        $azureMatch = $allMatches | Where-Object ToolTip -EQ 'Organization: example; Project: project; Provider: Azure'
+        $azureMatch.CompletionText | Should -Be "'completion-collision' -Provider 'Azure' -Organization 'example' -Project 'project'"
+        $azureMatch.ListItemText | Should -Be 'completion-collision'
+
+        $boundProviderInput = 'Enter-GitRepository -Provider GitHub completion-collision'
+        $boundProviderMatches = [System.Management.Automation.CommandCompletion]::CompleteInput(
+            $boundProviderInput,
+            $boundProviderInput.Length,
+            $null
+        ).CompletionMatches
+        @($boundProviderMatches).Count | Should -Be 1
+        $boundProviderMatches[0].CompletionText | Should -Be "'completion-collision' -UserOrOrganization 'alice''s org'"
+
+        $githubRepositoryPath = (Get-GitRepository -Name completion-collision -Provider GitHub -Exact).Path
+        Push-Location
+        try {
+            Invoke-Expression "Enter-GitRepository $($githubMatch.CompletionText)"
+            (Get-Location).Path | Should -Be $githubRepositoryPath
+        }
+        finally {
+            Pop-Location
+        }
+
+        $azureRepositoryPath = (Get-GitRepository -Name completion-collision -Provider Azure -Exact).Path
+        Push-Location
+        try {
+            Invoke-Expression "Enter-GitRepository $($azureMatch.CompletionText)"
+            (Get-Location).Path | Should -Be $azureRepositoryPath
+        }
+        finally {
+            Pop-Location
+        }
     }
 
     It 'uses provider hierarchy dynamic parameters when creating a repository' {

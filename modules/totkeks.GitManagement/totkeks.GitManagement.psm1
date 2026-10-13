@@ -23,8 +23,8 @@ $providerCompleter = {
 }
 
 $repositoryCompleter = {
-    param($commandName, $parameterName, $wordToComplete)
-    [Totkeks.GitManagement.GitManagementCompletion]::CompleteRepositories($script:GitManagementRuntime, $wordToComplete)
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    [Totkeks.GitManagement.GitManagementCompletion]::CompleteRepositories($script:GitManagementRuntime, $wordToComplete, $fakeBoundParameters)
 }
 
 Register-ArgumentCompleter -CommandName 'Get-Repository', 'Get-GitRepository' -ParameterName Provider -ScriptBlock $providerCompleter

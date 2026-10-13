@@ -21,7 +21,7 @@ The manifest applies the legacy `Git` command prefix:
 | `Add-GitProvider` / `Remove-GitProvider` | Configure URL patterns and repository directory hierarchies. |
 | `Get-GitBaseDirectory` / `Set-GitBaseDirectory` | Read or set the existing root folder used to organize clones. |
 | `Get-GitRepository` | Discover local repositories; filter by name, exact name, provider, or refresh the cache. |
-| `Enter-GitRepository` | Change location to a repository, prompting when names are ambiguous. |
+| `Enter-GitRepository` | Change location to a repository; completion adds provider and hierarchy selectors to identify duplicate names. |
 | `New-GitRepository` | Initialize a repository using dynamic hierarchy parameters for the selected provider. |
 | `Install-GitRepository` | Clone a provider URL into the configured hierarchy; `-Force` replaces an existing target. |
 | `Remove-GitBranch` | Delete a named local or remote branch, or clean up gone-upstream branches with `-Gone`. |
@@ -39,7 +39,7 @@ Enter-GitRepository PowerShell-Modules
 
 `New-GitRepository` exposes mandatory dynamic parameters corresponding to the selected provider's hierarchy. `Add-GitProvider` requires a valid regex with a named `Repository` capture and a hierarchy that includes `Repository`.
 
-Provider and repository-name arguments have tab completion. Completion uses the current module runtime configuration and repository cache; it does not maintain a separate stale list. Invalid provider values and missing repository paths are reported as PowerShell errors.
+Provider and repository-name arguments have tab completion. Repository completion inserts the provider and its configured hierarchy values, so selecting a duplicate name identifies the exact repository without a prompt. Completion uses the current module runtime configuration and repository cache; it does not maintain a separate stale list. Invalid provider values and missing repository paths are reported as PowerShell errors.
 
 Each imported module instance owns its provider settings, base directory, and repository cache. Independent PowerShell runspaces do not share these mutable settings. Repository discovery refreshes automatically after five minutes and can be forced with `Get-GitRepository -Refresh`.
 

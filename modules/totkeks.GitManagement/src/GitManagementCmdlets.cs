@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -313,19 +314,68 @@ public sealed class GetRepositoryCommand : PSCmdlet
 
 [Cmdlet(VerbsCommon.Enter, "Repository")]
 [OutputType(typeof(void))]
-public sealed class EnterRepositoryCommand : PSCmdlet
+public sealed class EnterRepositoryCommand : PSCmdlet, IDynamicParameters
 {
     [Parameter(Mandatory = true, Position = 0)]
     public string Name { get; set; } = string.Empty;
 
+    [Parameter]
+    public string? Provider { get; set; }
+
+    public object GetDynamicParameters()
+    {
+        var providerName = MyInvocation.BoundParameters.TryGetValue(nameof(Provider), out var boundProvider)
+            ? boundProvider?.ToString()
+            : Provider;
+        var provider = string.IsNullOrWhiteSpace(providerName)
+            ? null
+            : CmdletUtilities.GetRuntime(this).FindProvider(providerName);
+
+        var parameters = new RuntimeDefinedParameterDictionary();
+        if (provider is null)
+        {
+            return parameters;
+        }
+
+        foreach (var parameterName in provider.DirectoryHierarchy.Where(parameter =>
+                     !parameter.Equals("Repository", StringComparison.OrdinalIgnoreCase) &&
+                     !parameter.Equals(nameof(Name), StringComparison.OrdinalIgnoreCase) &&
+                     !parameter.Equals(nameof(Provider), StringComparison.OrdinalIgnoreCase)))
+        {
+            parameters.Add(parameterName, new RuntimeDefinedParameter(
+                parameterName,
+                typeof(string),
+                new Collection<Attribute> { new ParameterAttribute() }));
+        }
+
+        return parameters;
+    }
+
     protected override void ProcessRecord()
     {
+        var runtime = CmdletUtilities.GetRuntime(this);
+        var provider = string.IsNullOrWhiteSpace(Provider) ? null : runtime.FindProvider(Provider);
+        if (!string.IsNullOrWhiteSpace(Provider) && provider is null)
+        {
+            CmdletUtilities.WriteFailure(this, new ArgumentException($"The provider '{Provider}' does not exist."), "ProviderNotFound", ErrorCategory.ObjectNotFound, Provider);
+            return;
+        }
+
         IReadOnlyList<GitRepository> repositories;
         try
         {
-            repositories = CmdletUtilities.GetRuntime(this)
-                .GetRepositories()
-                .Where(repository => string.Equals(repository.Properties["Repository"]?.ToString(), Name, StringComparison.OrdinalIgnoreCase))
+            repositories = runtime.GetRepositories()
+                .Where(repository =>
+                    string.Equals(repository.Properties["Repository"]?.ToString(), Name, StringComparison.OrdinalIgnoreCase) &&
+                    (provider is null || string.Equals(repository.Provider, provider.Name, StringComparison.OrdinalIgnoreCase)) &&
+                    (provider is null || provider.DirectoryHierarchy
+                        .Where(parameterName =>
+                            !parameterName.Equals("Repository", StringComparison.OrdinalIgnoreCase) &&
+                            !parameterName.Equals(nameof(Name), StringComparison.OrdinalIgnoreCase) &&
+                            !parameterName.Equals(nameof(Provider), StringComparison.OrdinalIgnoreCase))
+                        .All(parameterName =>
+                            !MyInvocation.BoundParameters.TryGetValue(parameterName, out var value) ||
+                            string.Equals(repository.Properties[parameterName]?.ToString(), value?.ToString(), StringComparison.OrdinalIgnoreCase))))
                 .ToArray();
         }
         catch (Exception exception) when (exception is InvalidOperationException or IOException or UnauthorizedAccessException)
