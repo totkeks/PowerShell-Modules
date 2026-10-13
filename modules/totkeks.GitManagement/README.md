@@ -6,10 +6,10 @@ A C# binary PowerShell module for managing Git hosting providers, local reposito
 
 ```powershell
 .\Build.ps1
-Import-Module .\totkeks.GitManagement.psd1 -Force
+Import-Module .\out\totkeks.GitManagement\totkeks.GitManagement.psd1 -Force
 ```
 
-Git must be installed and available on `PATH`. The build script places intermediate files under `build`, copies the assembly into this directory for development imports, and creates a clean installable module under `out\totkeks.GitManagement`.
+Git must be installed and available on `PATH`. The build script places intermediate files under `build` and stages a clean importable module under `out\totkeks.GitManagement`.
 
 ## Commands
 

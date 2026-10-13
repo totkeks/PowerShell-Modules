@@ -3,7 +3,6 @@ $ErrorActionPreference = 'Stop'
 $projectPath = Join-Path $PSScriptRoot 'src\totkeks.GitManagement.csproj'
 $assemblyName = 'totkeks.GitManagement.dll'
 $outputPath = Join-Path $PSScriptRoot "build\bin\Release\net8.0\$assemblyName"
-$moduleAssemblyPath = Join-Path $PSScriptRoot $assemblyName
 $moduleOutputPath = Join-Path $PSScriptRoot 'out\totkeks.GitManagement'
 
 & dotnet build $projectPath --configuration Release
@@ -15,8 +14,6 @@ if (-not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
     throw "Build succeeded, but the assembly was not found at $outputPath."
 }
 
-Copy-Item -LiteralPath $outputPath -Destination $moduleAssemblyPath -Force
-
 if (Test-Path -LiteralPath $moduleOutputPath) {
     Remove-Item -LiteralPath $moduleOutputPath -Recurse -Force
 }
@@ -24,16 +21,14 @@ if (Test-Path -LiteralPath $moduleOutputPath) {
 New-Item -ItemType Directory -Path $moduleOutputPath -Force | Out-Null
 
 $moduleFiles = @(
-    'totkeks.GitManagement.psd1'
-    'totkeks.GitManagement.psm1'
-    'GitRepository.Format.ps1xml'
+    (Join-Path $PSScriptRoot 'totkeks.GitManagement.psd1')
+    (Join-Path $PSScriptRoot 'totkeks.GitManagement.psm1')
+    (Join-Path $PSScriptRoot 'GitRepository.Format.ps1xml')
+    $outputPath
 )
 
 foreach ($file in $moduleFiles) {
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot $file) -Destination $moduleOutputPath
+    Copy-Item -LiteralPath $file -Destination $moduleOutputPath
 }
 
-Copy-Item -LiteralPath $outputPath -Destination (Join-Path $moduleOutputPath $assemblyName)
-
-Write-Host "Built development assembly: $moduleAssemblyPath"
 Write-Host "Staged module: $moduleOutputPath"
