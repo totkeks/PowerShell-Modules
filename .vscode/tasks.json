@@ -1,0 +1,36 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "GitManagement: PowerShell dev shell",
+			"type": "process",
+			"command": "pwsh",
+			"isBackground": true,
+			"args": [
+				"-NoLogo",
+				"-NoProfile",
+				"-NoExit",
+				"-File",
+				"${workspaceFolder}\\modules\\totkeks.GitManagement\\Enter-DevShell.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"clear": true
+			},
+			"problemMatcher": {
+				"owner": "custom",
+				"pattern": {
+					"regexp": "^Module loaded:.*$"
+				},
+				"background": {
+					"activeOnStart": true,
+					"endsPattern": "^Module loaded:.*$"
+				}
+			}
+		}
+	]
+}

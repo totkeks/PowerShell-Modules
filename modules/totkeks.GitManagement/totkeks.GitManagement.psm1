@@ -1,25 +1,34 @@
-$ErrorActionPreference = "Stop"
-Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
-if ($null -eq (Get-Command "git.exe" -ErrorAction SilentlyContinue)) {
-	throw "Unable to find 'git.exe' in your PATH. GitManagement module does not work without git installed."
+$gitCommand = Get-Command -Name git -ErrorAction SilentlyContinue
+if ($null -eq $gitCommand) {
+    throw "Unable to find 'git' in your PATH. GitManagement does not work without git installed."
 }
 
-# Script-internal configuration object
-$Script:GitManagement = @{
-	Providers = @{ }
-	BaseDirectory = $null
-	Repositories = $null
-	LastRepositoryScan = $null
+$assemblyName = 'totkeks.GitManagement.dll'
+$assemblyPath = Join-Path -Path $PSScriptRoot -ChildPath $assemblyName
+
+if (-not (Test-Path $assemblyPath)) {
+    throw "Assembly $assemblyName not found. Build the project first by running Build.ps1."
 }
 
-# Load all scripts belonging to this module
-Get-ChildItem -Recurse $PSScriptRoot *.ps1 | ForEach-Object { . $_.FullName }
+Import-Module -Name $assemblyPath -ErrorAction Stop
+$script:GitManagementRuntime = [Totkeks.GitManagement.GitManagementRuntime]::CreateDefault()
 
-# Even if not a recommended verb, let's have a `clone` alias
-Set-Alias -Name Clone-Repository -Value Install-Repository
+Set-Alias -Name Clone-Repository -Value Install-Repository -Scope Script
 
-# Default providers
-Add-Provider Azure 'https://(?:\w+@)?dev.azure.com/(?<Organization>[\w-]+)/(?<Project>[\w-]+)/_git/(?<Repository>[\w-]+)' Organization, Project, Repository
-Add-Provider GitHub 'https://github\.com/(?<UserOrOrganization>[\w-]+)/(?<Repository>[\w-]+)\.git' UserOrOrganization, Repository
-Add-Provider Bitbucket 'https://(?:\w+@)?bitbucket.org/(?<User>[\w-]+)/(?<Repository>[\w-]+)\.git' User, Repository
+$providerCompleter = {
+    param($commandName, $parameterName, $wordToComplete)
+    [Totkeks.GitManagement.GitManagementCompletion]::CompleteProviders($script:GitManagementRuntime, $wordToComplete)
+}
+
+$repositoryCompleter = {
+    param($commandName, $parameterName, $wordToComplete)
+    [Totkeks.GitManagement.GitManagementCompletion]::CompleteRepositories($script:GitManagementRuntime, $wordToComplete)
+}
+
+Register-ArgumentCompleter -CommandName 'Get-Repository', 'Get-GitRepository' -ParameterName Provider -ScriptBlock $providerCompleter
+Register-ArgumentCompleter -CommandName 'Get-Provider', 'Get-GitProvider' -ParameterName Name -ScriptBlock $providerCompleter
+Register-ArgumentCompleter -CommandName 'New-Repository', 'New-GitRepository' -ParameterName Provider -ScriptBlock $providerCompleter
+Register-ArgumentCompleter -CommandName 'Remove-Provider', 'Remove-GitProvider' -ParameterName Name -ScriptBlock $providerCompleter
+Register-ArgumentCompleter -CommandName 'Enter-Repository', 'Enter-GitRepository' -ParameterName Name -ScriptBlock $repositoryCompleter
