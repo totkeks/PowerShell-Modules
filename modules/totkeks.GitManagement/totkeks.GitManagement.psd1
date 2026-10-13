@@ -1,6 +1,6 @@
 @{
     RootModule        = 'totkeks.GitManagement.psm1'
-    ModuleVersion     = '2.0.0'
+    ModuleVersion     = '2.1.0'
     GUID              = 'e2d394da-db1d-4ad6-b98c-104379eb299a'
     Author            = 'Norman Dankert'
     Copyright         = '(c) Norman Dankert. All rights reserved.'
